@@ -1,0 +1,10 @@
+@layer {
+  .pagination-item {
+    @apply w-10 h-10 flex items-center justify-center rounded-lg cursor-pointer
+  }
+
+  .pagination-item.selected,
+  .pagination-item:hover {
+    @apply bg-purple-300 transition-all duration-75 ease-in
+  }
+}
