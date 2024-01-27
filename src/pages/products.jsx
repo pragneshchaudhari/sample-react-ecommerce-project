@@ -24,7 +24,6 @@ const Products = () => {
   const currentTableData = useMemo(() => {
     const firstPageIndex = (currentPage - 1) * PageSize;
     const lastPageIndex = firstPageIndex + PageSize;
-
     return data?.slice(firstPageIndex, lastPageIndex);
   }, [currentPage, data]);
 
@@ -90,15 +89,19 @@ const Products = () => {
           throw new Error("Failed to load data");
         })
         .then((resData) => {
-          // Default asc
+          let newData = [...resData]
           if(category) {
-            resData = resData.filter((item) => {
+            console.log(category)
+            newData = [...resData].filter((item) => {
               return item.category.name.toLowerCase() === category.toLowerCase();
             });
           }
-          resData.sort(handleProductSorting);
-          setData(resData);
-          setSourceData(resData);
+          // Default asc
+          newData.sort(handleProductSorting);
+          // console.log(newData);
+          setData(newData);
+          setSourceData(resData.sort(handleProductSorting));
+          setFilteredData(newData);
         })
         .catch((error) => {
           console.log(error);
@@ -106,6 +109,7 @@ const Products = () => {
         });
     };
     fetchProducts();
+    
   }, []);
 
   useEffect(() => {
@@ -132,7 +136,7 @@ const Products = () => {
     url.searchParams.set("sort", sort);
     url.searchParams.set("page", currentPage);
     url.searchParams.set("limit", PageSize);
-    url.searchParams.set("filter", category || "all");
+    url.searchParams.set("filter", category);
     window.history.pushState({}, "", url);
   }, [sort, currentPage, category]);
 
@@ -191,7 +195,7 @@ const Products = () => {
       window.removeEventListener("resize", updateParentHeight);
     };
   }, [data]); // Run this effect whenever data changes
-
+  
   return (
     <div className="flex flex-col grow">
       <ErrorBoundary>
